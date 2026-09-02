@@ -50,13 +50,18 @@ void domain_save ( int_t step )
 void domain_initialize ( void )
 {
 // BEGIN: T1
+
+    // CFL condition
     dt = dx/c;
 
+
+    // Allocate memory for previous, current and next timestep.
     for (int i = 0; i<3; i++){
         buffers[i] = malloc ((N + 2) * sizeof(real_t));
 
     }
 
+    // Initialize condition u(x,0) = cos(2*pi*x).
     for(int_t i = 0; i<N; i++){
         real_t x = (real_t)i / N;
         
@@ -74,6 +79,8 @@ void domain_initialize ( void )
 // BEGIN: T2
 void domain_finalize ( void )
 {
+    // Free all three buffers allocated in T1 and
+    // prevent the pointer from referring to freed memory.
     for(int i = 0; i<3; i++){
         free(buffers[i]);
         buffers[i]=NULL;
@@ -88,6 +95,7 @@ void domain_finalize ( void )
 // Rotate the time step buffers.
 // BEGIN: T3
 void domain_shift ( void ){
+    //Rotate the three time-step buffers 1 step forward in time.
     real_t *tmp = buffers[0];
     buffers[0] = buffers[1];
     buffers[1] = buffers[2];
@@ -99,8 +107,10 @@ void domain_shift ( void ){
 // TASK: T4
 // Derive step t+1 from steps t and t-1.
 // BEGIN: T4
-void domain_step ( void )
-{
+void domain_step ( void ){
+
+    // Calculate the next time step using the finite-difference wave equation.
+
     real_t ce = (dt * dt * c * c) / (dx * dx);
 
     for ( int_t i = 0; i < N; i++ )
@@ -115,6 +125,8 @@ void domain_step ( void )
 // Neumann (reflective) boundary condition.
 // BEGIN: T5
 void domain_boundary ( void ){
+
+    // Apply the Neumann reflective boundary condition to both edges.
     U(-1) = U(1);
     U(N) = U(N-2);
 }
@@ -123,9 +135,9 @@ void domain_boundary ( void ){
 
 // TASK: T6
 // Main time integration.
-void simulate( void )
-{
+void simulate( void ){
 // BEGIN: T6
+    // Main time-integration loop.
     int_t iteration=0;
     domain_save ( iteration / snapshot_freq );
     for ( iteration = 1; iteration <= max_iteration; iteration++ ){
@@ -134,6 +146,8 @@ void simulate( void )
         domain_step();
         domain_shift();
 
+
+        // Save the state every 10 iterations.
         if ( iteration % snapshot_freq == 0 ){
             domain_save( iteration / snapshot_freq );
         }
@@ -144,6 +158,7 @@ void simulate( void )
 
 int main ( void )
 {
+    // Use the functions we made in previous tasks to run the sim.
     domain_initialize();
 
     simulate();
