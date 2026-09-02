@@ -1,1 +1,30 @@
-1:
+Q1 answer:
+Pros: The macros can help the code become more readable both for the developer 
+and for outsiders wanting to understand the code. It makes the code more similar to
+the actual math/physics terminology if done correctly. Can also make the code shorter to write 
+and therefore improve developer time. In our case it also makes the ghost cells easier to manage.
+
+Cons: From what i understand after researching, the fact that macros are textual subs makes 
+it not provide normal type checking. Also it can make debugging more difficult, and produce 
+unexpected behaviour.
+
+Q2 answer:
+Another possible boundary condition is an absorbing boundary condition. This allows waves to 
+leave the computational domain with minimal reflection. Unlike the Neumann reflective boundary 
+condition, waves reaching the edge would mostly disappear from the simulation instead of being 
+reflected back.
+
+Q3 answer:
+If memory is not allocated in T1, the buffer pointers remain NULL, it dereferences a null
+pointer. This causes undefined behavior and will most likely make the program crash.
+
+Q4 answer:
+float const *a is a pointer to a constant float. The pointer may be changed to point 
+somewhere else, but the float cannot be modified through the pointer.
+float *const b is a constant pointer to a float. The pointer cannot be changed but the float can.
+
+
+
+Sources:
+https://en.wikipedia.org/wiki/Absorbing_boundary_condition
+https://stackoverflow.com/questions/17970627/why-are-c-macros-not-type-safe
